@@ -1,0 +1,29 @@
+version: "3.3"
+services:
+  db:
+    image: postgres
+    ports:
+      - "5432:5432"
+    restart: always
+    environment:
+        POSTGRES_USER: tarik
+        POSTGRES_PASSWORD: pass
+        POSTGRES_DB: todo-db
+        POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - "~/docker-volumes:/var/lib/postgresql/data"
+
+
+#version: "3.3"
+#services:
+#  db:
+#    image: mysql
+#    ports:
+#      - "3306:3306"
+#    restart: always
+#    environment:
+#      MYSQL_USER: tarik
+#      MYSQL_PASSWORD: pass
+#      MYSQL_DATABASE: todo-db
+#    volumes:
+#      - "~/docker-volumes:/var/lib/mysql"
