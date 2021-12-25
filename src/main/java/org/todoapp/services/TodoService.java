@@ -1,15 +1,15 @@
 package org.todoapp.services;
 
-import org.todoapp.models.Todo;
+import org.todoapp.dto.TodoDto;
 
 import java.util.List;
 
 public interface TodoService {
-    Todo save(Todo todo);
+    TodoDto saveTodoDto(TodoDto dto);
 
-    Todo update(Todo todo);
+    TodoDto updateTodoDto(TodoDto dto);
 
-    Todo findById(long id);
+    TodoDto getTodoDtoById(long id);
 
-    List<Todo> findAll();
+    List<TodoDto> getAllTodoDto();
 }

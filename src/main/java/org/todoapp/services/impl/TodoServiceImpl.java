@@ -1,46 +1,43 @@
 package org.todoapp.services.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.todoapp.dto.TodoDto;
+import org.todoapp.exceptions.NotFoundException;
+import org.todoapp.mappers.TodoMapper;
 import org.todoapp.models.Todo;
 import org.todoapp.repositories.TodoRepository;
 import org.todoapp.services.TodoService;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
+@RequiredArgsConstructor
 public class TodoServiceImpl implements TodoService {
     private final TodoRepository todoRepository;
+    private final TodoMapper todoMapper;
 
-    public TodoServiceImpl(TodoRepository todoRepository) {
-        this.todoRepository = todoRepository;
+    @Override
+    public TodoDto saveTodoDto(TodoDto dto) {
+        return todoMapper.todoDtoFromTodo(todoRepository.save(todoMapper.todoFromTodoDto(dto)));
     }
 
     @Override
-    public Todo save(Todo todo) {
-        return todoRepository.save(todo);
+    public TodoDto updateTodoDto(TodoDto dto) {
+        Todo existingTodo = todoRepository.findById(dto.getId()).orElseThrow(() -> new NotFoundException("Todo with id %d not found".formatted(dto.getId())));
+        Todo todo = todoMapper.todoFromTodoDto(dto);
+        todo.setId(existingTodo.getId());
+        return todoMapper.todoDtoFromTodo(todoRepository.save(todo));
     }
 
     @Override
-    public Todo update(Todo todo) {
-        Todo existingTodo = todoRepository.findById(todo.getId()).orElseThrow(() -> new NoSuchElementException("Todo with id %d not found".formatted(todo.getId())));
-        Todo updatedTodo = Todo.builder()
-                .id(existingTodo.getId())
-                .title(todo.getTitle())
-                .description(todo.getDescription())
-                .priority(todo.getPriority())
-                .state(todo.getState())
-                .completionDate(existingTodo.getCompletionDate()).build();
-        return todoRepository.save(updatedTodo);
+    public TodoDto getTodoDtoById(long id) {
+        return todoMapper.todoDtoFromTodo(todoRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Todo with id %d not found".formatted(id))));
     }
 
     @Override
-    public Todo findById(long id) {
-        return todoRepository.findById(id).orElseThrow(() -> new NoSuchElementException("Todo with id %d not found".formatted(id)));
-    }
-
-    @Override
-    public List<Todo> findAll() {
-        return todoRepository.findAll();
+    public List<TodoDto> getAllTodoDto() {
+        return todoMapper.todoDtosFromTodos(todoRepository.findAll());
     }
 }

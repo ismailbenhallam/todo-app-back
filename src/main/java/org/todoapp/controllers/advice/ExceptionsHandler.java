@@ -1,20 +1,20 @@
 package org.todoapp.controllers.advice;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.todoapp.controllers.TodoController;
+import org.todoapp.exceptions.NotFoundException;
 
-import java.util.NoSuchElementException;
-
-@RestControllerAdvice
-//@Log4j2
+@Log4j2
+@RestControllerAdvice(basePackageClasses = TodoController.class)
 public class ExceptionsHandler {
 
-    @ExceptionHandler(NoSuchElementException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    String noSuchElementException(NoSuchElementException ex) {
-//        log.error("Error: " + ex.getMessage());
-        return ex.getMessage();
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<ApiError> noSuchElementException(NotFoundException ex) {
+        log.info(ex.getMessage());
+        return new ResponseEntity<>(new ApiError(ex.getMessage(), HttpStatus.NOT_FOUND.value()), HttpStatus.NOT_FOUND);
     }
 }

@@ -9,11 +9,12 @@ import org.todoapp.models.TodoState;
 
 import java.util.List;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface TodoMapper {
     TodoMapper INSTANCE = Mappers.getMapper(TodoMapper.class);
 
     TodoDto todoDtoFromTodo(Todo todo);
+
     Todo todoFromTodoDto(TodoDto dto);
 
     default int stateOrdinal(TodoState state) {
