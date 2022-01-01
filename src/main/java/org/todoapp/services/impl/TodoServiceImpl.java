@@ -3,6 +3,7 @@ package org.todoapp.services.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.todoapp.dto.TodoDto;
+import org.todoapp.dto.TodoToSaveDto;
 import org.todoapp.exceptions.NotFoundException;
 import org.todoapp.mappers.TodoMapper;
 import org.todoapp.models.Todo;
@@ -18,15 +19,16 @@ public class TodoServiceImpl implements TodoService {
     private final TodoMapper todoMapper;
 
     @Override
-    public TodoDto saveTodoDto(TodoDto dto) {
-        return todoMapper.todoDtoFromTodo(todoRepository.save(todoMapper.todoFromTodoDto(dto)));
+    public TodoDto saveTodoDto(TodoToSaveDto dto) {
+        return todoMapper.todoDtoFromTodo(todoRepository.save(todoMapper.todoFromTodoToSaveDto(dto)));
     }
 
     @Override
     public TodoDto updateTodoDto(TodoDto dto) {
         Todo existingTodo = todoRepository.findById(dto.getId()).orElseThrow(() -> new NotFoundException("Todo with id %d not found".formatted(dto.getId())));
-        Todo todo = todoMapper.todoFromTodoDto(dto);
+        Todo todo = todoMapper.todoFromTodoToSaveDto(dto);
         todo.setId(existingTodo.getId());
+
         return todoMapper.todoDtoFromTodo(todoRepository.save(todo));
     }
 
@@ -38,6 +40,6 @@ public class TodoServiceImpl implements TodoService {
 
     @Override
     public List<TodoDto> getAllTodoDto() {
-        return todoMapper.todoDtosFromTodos(todoRepository.findAll());
+        return todoMapper.todoDtoListFromTodoList(todoRepository.findAll());
     }
 }
